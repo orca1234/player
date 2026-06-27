@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathtime!</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.wrap { width: 100%; max-width: 480px; padding: 1.5rem 1rem; }
+.card { background: #fff; border: 0.5px solid #d3d1c7; border-radius: 12px; padding: 1.5rem; }
+.center { text-align: center; }
+h1 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+.sub { font-size: 14px; color: #5f5e5a; margin-bottom: 1.5rem; }
+input[type="text"] { width: 100%; padding: 10px 12px; border: 0.5px solid #b4b2a9; border-radius: 8px; font-size: 15px; font-family: inherit; background: #fff; color: #1a1a18; }
+input:focus { outline: none; border-color: #378add; box-shadow: 0 0 0 2px #e6f1fb; }
+button.primary { width: 100%; padding: 10px; background: #1a1a18; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 10px; }
+button.primary:hover { opacity: 0.85; }
+button.secondary { padding: 6px 14px; background: #fff; color: #1a1a18; border: 0.5px solid #b4b2a9; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; }
+button.secondary:hover { background: #f5f5f0; }
+.download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: #1a1a18; color: #fff; border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; margin-bottom: 1rem; }
+.download:hover { opacity: 0.85; }
+.answer-row { display: flex; gap: 8px; }
+.answer-row input { flex: 1; }
+.answer-row button { padding: 10px 20px; background: #1a1a18; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.msg { padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-top: 12px; }
+.msg-ok { background: #eaf3de; color: #3b6d11; }
+.msg-err { background: #fcebeb; color: #a32d2d; }
+.top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.top-name { font-size: 15px; font-weight: 500; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; background: #e6f1fb; color: #185fa5; margin-left: 8px; }
+.big-icon { font-size: 40px; margin-bottom: 12px; }
+.prob-label { font-size: 13px; color: #5f5e5a; margin-bottom: 4px; }
+.prob-name { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="screen-login" class="card center">
+    <h1>Mathtime!</h1>
+    <p class="sub">이름을 입력하고 입장하세요</p>
+    <input type="text" id="nick-input" placeholder="닉네임" onkeydown="if(event.key==='Enter')join()">
+    <button class="primary" onclick="join()">입장하기</button>
+    <div id="login-msg"></div>
+  </div>
+
+  <div id="screen-game" style="display:none">
+    <div class="card">
+      <div class="top-row">
+        <div>
+          <span class="top-name" id="g-name"></span>
+          <span class="badge" id="g-badge"></span>
+        </div>
+        <button class="secondary" onclick="leave()">나가기</button>
+      </div>
+
+      <div id="g-waiting" class="center" style="padding:2rem 0">
+        <h1 style="font-size:18px">세션 대기 중</h1>
+        <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타나요</p>
+      </div>
+
+      <div id="g-active" style="display:none">
+        <div class="prob-label" id="g-prob-label"></div>
+        <div class="prob-name" id="g-prob-name"></div>
+        <a id="g-download" href="#" target="_blank" class="download" style="display:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PPT 다운로드
+        </a>
+        <div class="answer-row">
+          <input type="text" id="ans-input" placeholder="답을 입력하세요" onkeydown="if(event.key==='Enter')submit()">
+          <button onclick="submit()">제출</button>
+        </div>
+        <div id="ans-msg"></div>
+      </div>
+
+      <div id="g-done" class="center" style="display:none;padding:2rem 0">
+        <h1 style="font-size:18px">끝!</h1>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiTZ2OXhz-iBxmj2jO7H4P1s3B-3FfifM",
+  authDomain: "mathtime-32f04.firebaseapp.com",
+  databaseURL: "https://mathtime-32f04-default-rtdb.firebaseio.com",
+  projectId: "mathtime-32f04",
+  storageBucket: "mathtime-32f04.firebasestorage.app",
+  messagingSenderId: "109741787829",
+  appId: "1:109741787829:web:7fb09ac5c7dbe0262accfc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let nick = '', problems = [], solved = 0, sessionActive = false;
+let unsubSession, unsubProblems, unsubPlayer;
+
+window.join = async () => {
+  nick = document.getElementById('nick-input').value.trim();
+  const msg = document.getElementById('login-msg');
+  if (!nick) { msg.innerHTML = '<div class="msg msg-err">닉네임을 입력해주세요</div>'; return; }
+  await set(ref(db, 'players/' + nick), { solved: 0 });
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-game').style.display = '';
+  document.getElementById('g-name').textContent = nick + '님';
+  startListeners();
+};
+
+function startListeners() {
+  unsubProblems = onValue(ref(db, 'problems'), snap => {
+    problems = snap.val() ? Object.values(snap.val()).sort((a,b) => a.num - b.num) : [];
+    render();
+  });
+  unsubSession = onValue(ref(db, 'session/active'), snap => {
+    sessionActive = snap.val() || false;
+    render();
+  });
+  unsubPlayer = onValue(ref(db, 'players/' + nick), snap => {
+    solved = (snap.val() && snap.val().solved) || 0;
+    render();
+  });
+}
+
+function render() {
+  document.getElementById('g-badge').textContent = solved + '/' + problems.length + ' 완료';
+  const waiting = document.getElementById('g-waiting');
+  const active = document.getElementById('g-active');
+  const done = document.getElementById('g-done');
+
+  if (!sessionActive) {
+    waiting.style.display=''; active.style.display='none'; done.style.display='none'; return;
+  }
+  if (problems.length > 0 && solved >= problems.length) {
+    waiting.style.display='none'; active.style.display='none'; done.style.display=''; return;
+  }
+  const prob = problems[solved];
+  if (!prob) { waiting.style.display=''; active.style.display='none'; done.style.display='none'; return; }
+
+  waiting.style.display='none'; active.style.display=''; done.style.display='none';
+  document.getElementById('g-prob-label').textContent = '문제 ' + (solved+1) + ' / ' + problems.length;
+  document.getElementById('g-prob-name').textContent = prob.name;
+
+  const dlBtn = document.getElementById('g-download');
+if (prob.fileLink) {
+  dlBtn.style.display = 'flex';
+  // 구글 드라이브 링크를 다운로드 링크로 변환
+  const match = prob.fileLink.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) {
+    dlBtn.href = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  } else {
+    dlBtn.href = prob.fileLink;
+  }
+} else {
+  dlBtn.style.display = 'none';
+}
+
+  document.getElementById('ans-input').value = '';
+  document.getElementById('ans-msg').innerHTML = '';
+}
+
+window.submit = async () => {
+  const val = document.getElementById('ans-input').value.trim().toLowerCase().replace(/\s/g,'');
+  const msg = document.getElementById('ans-msg');
+  if (!val) return;
+  const prob = problems[solved];
+  if (!prob) return;
+  if (val === prob.answer) {
+    await set(ref(db, 'players/' + nick + '/solved'), solved + 1);
+    msg.innerHTML = '<div class="msg msg-ok">🎉 정답이에요!</div>';
+  } else {
+    msg.innerHTML = `<div class="msg msg-err">❌ 틀렸어요!${prob.hint ? ' 힌트: ' + prob.hint : ''}</div>`;
+  }
+};
+
+window.leave = async () => {
+  if (unsubSession) unsubSession();
+  if (unsubProblems) unsubProblems();
+  if (unsubPlayer) unsubPlayer();
+  await remove(ref(db, 'players/' + nick));
+  nick = ''; problems = []; solved = 0;
+  document.getElementById('screen-login').style.display = '';
+  document.getElementById('screen-game').style.display = 'none';
+  document.getElementById('nick-input').value = '';
+  document.getElementById('login-msg').innerHTML = '';
+};
+</script>
+</body>
+</html>
