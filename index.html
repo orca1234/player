@@ -173,9 +173,9 @@ window.submit = async () => {
   if (!prob) return;
   if (val === prob.answer) {
     await set(ref(db, 'players/' + nick + '/solved'), solved + 1);
-    msg.innerHTML = '<div class="msg msg-ok">🎉 정답이에요!</div>';
+    msg.innerHTML = '<div class="msg msg-ok">정답!</div>';
   } else {
-    msg.innerHTML = `<div class="msg msg-err">❌ 틀렸어요!${prob.hint ? ' 힌트: ' + prob.hint : ''}</div>`;
+    msg.innerHTML = `<div class="msg msg-err">땡!${prob.hint ? ' 힌트: ' + prob.hint : ''}</div>`;
   }
 };
 
