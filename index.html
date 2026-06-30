@@ -84,6 +84,7 @@ button.secondary:hover { background: var(--hover-bg); }
 
   <!-- 회원가입 화면 -->
   <div id="screen-signup" class="card center" style="display:none">
+    
     <h1>회원가입</h1>
     <p class="sub">닉네임과 비밀번호를 정하세요</p>
     <label>닉네임</label>
@@ -97,6 +98,7 @@ button.secondary:hover { background: var(--hover-bg); }
 
   <!-- 어드민 리다이렉트 화면 -->
   <div id="screen-redirect" class="card redirect-box" style="display:none">
+    
     <h1 style="font-size:18px">어드민 계정이에요</h1>
     <p class="sub">어드민 페이지로 이동할게요</p>
   </div>
@@ -110,7 +112,7 @@ button.secondary:hover { background: var(--hover-bg); }
           <span class="badge" id="g-badge"></span>
         </div>
         <div class="header-actions">
-          <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+          <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">다크</button>
           <button class="secondary" onclick="logout()">로그아웃</button>
         </div>
       </div>
@@ -122,6 +124,7 @@ button.secondary:hover { background: var(--hover-bg); }
 
       <div id="panel-quiz">
         <div id="g-waiting" class="center" style="padding:2rem 0">
+          
           <h1 style="font-size:18px">세션 대기 중</h1>
           <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타나요</p>
         </div>
@@ -141,6 +144,7 @@ button.secondary:hover { background: var(--hover-bg); }
         </div>
 
         <div id="g-done" class="center" style="display:none;padding:2rem 0">
+          
           <h1 style="font-size:18px">끝!</h1>
         </div>
       </div>
@@ -149,8 +153,8 @@ button.secondary:hover { background: var(--hover-bg); }
         <div style="margin-bottom:1.25rem">
           <div style="font-size:13px;color:var(--text-sub);margin-bottom:8px;font-weight:500">화면 테마</div>
           <div style="display:flex;gap:8px">
-            <button class="secondary" id="theme-light-btn" onclick="setTheme('light')" style="flex:1">☀️ 라이트</button>
-            <button class="secondary" id="theme-dark-btn" onclick="setTheme('dark')" style="flex:1">🌙 다크</button>
+            <button class="secondary" id="theme-light-btn" onclick="setTheme('light')" style="flex:1">라이트</button>
+            <button class="secondary" id="theme-dark-btn" onclick="setTheme('dark')" style="flex:1">다크</button>
           </div>
         </div>
         <div>
@@ -190,7 +194,7 @@ let seenMessageKeys = new Set();
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   const tb = document.getElementById('theme-toggle');
-  if (tb) tb.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (tb) tb.textContent = theme === 'dark' ? '라이트' : '다크';
   localStorage.setItem('quiz-player-theme', theme);
   const lb = document.getElementById('theme-light-btn');
   const dbtn = document.getElementById('theme-dark-btn');
