@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathtime!</title>
+<title>Mathtime</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -28,12 +28,15 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .center { text-align: center; }
 h1 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
 .sub { font-size: 14px; color: var(--text-sub); margin-bottom: 1.5rem; }
-input[type="text"] { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--input-bg); color: var(--text); }
+label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; margin-top: 12px; text-align: left; }
+label:first-of-type { margin-top: 0; }
+input[type="text"], input[type="password"] { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--input-bg); color: var(--text); }
 input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
-button.primary { width: 100%; padding: 10px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 10px; }
+button.primary { width: 100%; padding: 10px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 14px; }
 button.primary:hover { opacity: 0.85; }
 button.secondary { padding: 6px 14px; background: var(--card); color: var(--text); border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; }
 button.secondary:hover { background: var(--hover-bg); }
+.link-btn { background: none; border: none; color: var(--accent-text); font-size: 13px; cursor: pointer; font-family: inherit; margin-top: 14px; text-decoration: underline; }
 .download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: var(--text); color: var(--bg); border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; margin-bottom: 1rem; }
 .download:hover { opacity: 0.85; }
 .answer-row { display: flex; gap: 8px; }
@@ -51,32 +54,54 @@ button.secondary:hover { background: var(--hover-bg); }
 .theme-btn { width: 32px; height: 32px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .theme-btn:hover { background: var(--hover-bg); }
 .header-actions { display: flex; gap: 6px; align-items: center; }
-
-/* tabs */
 .tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
 .tab-btn { flex: 1; padding: 8px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text-sub); font-size: 13px; cursor: pointer; font-family: inherit; }
 .tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
 .history-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--divider); font-size: 13px; }
 .history-item:last-child { border-bottom: none; }
 .history-num { color: var(--text-muted); min-width: 40px; }
 .history-ans { color: var(--text-sub); flex: 1; }
-
 .msg-toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent-text); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 200; max-width: 90%; text-align: center; animation: slideDown 0.3s ease; }
 @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.redirect-box { text-align: center; padding: 2rem 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <!-- 로그인 화면 -->
   <div id="screen-login" class="card center">
     <h1>Mathtime</h1>
-    <p class="sub">닉네임을 입력하고 입장하세요</p>
-    <input type="text" id="nick-input" placeholder="닉네임" onkeydown="if(event.key==='Enter')join()">
-    <button class="primary" onclick="join()">입장하기</button>
+    <p class="sub">로그인하고 시작하세요</p>
+    <label>닉네임</label>
+    <input type="text" id="login-nick" placeholder="닉네임" onkeydown="if(event.key==='Enter')doLogin()">
+    <label>비밀번호</label>
+    <input type="password" id="login-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="primary" onclick="doLogin()">로그인</button>
+    <button class="link-btn" onclick="showSignup()">계정이 없으신가요? 회원가입</button>
     <div id="login-msg"></div>
   </div>
 
+  <!-- 회원가입 화면 -->
+  <div id="screen-signup" class="card center" style="display:none">
+    <h1>회원가입</h1>
+    <p class="sub">닉네임과 비밀번호를 정하세요</p>
+    <label>닉네임</label>
+    <input type="text" id="signup-nick" placeholder="닉네임" onkeydown="if(event.key==='Enter')doSignup()">
+    <label>비밀번호</label>
+    <input type="password" id="signup-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doSignup()">
+    <button class="primary" onclick="doSignup()">회원가입</button>
+    <button class="link-btn" onclick="showLogin()">이미 계정이 있으신가요? 로그인</button>
+    <div id="signup-msg"></div>
+  </div>
+
+  <!-- 어드민 리다이렉트 화면 -->
+  <div id="screen-redirect" class="card redirect-box" style="display:none">
+    <h1 style="font-size:18px">어드민 계정이에요</h1>
+    <p class="sub">어드민 페이지로 이동할게요</p>
+  </div>
+
+  <!-- 게임 화면 -->
   <div id="screen-game" style="display:none">
     <div class="card">
       <div class="top-row">
@@ -86,7 +111,7 @@ button.secondary:hover { background: var(--hover-bg); }
         </div>
         <div class="header-actions">
           <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">🌙</button>
-          <button class="secondary" onclick="leave()">나가기</button>
+          <button class="secondary" onclick="logout()">로그아웃</button>
         </div>
       </div>
 
@@ -95,11 +120,10 @@ button.secondary:hover { background: var(--hover-bg); }
         <button class="tab-btn" id="tab-mypage" onclick="switchTab('mypage')">내 정보</button>
       </div>
 
-      <!-- 문제 탭 -->
       <div id="panel-quiz">
         <div id="g-waiting" class="center" style="padding:2rem 0">
           <h1 style="font-size:18px">세션 대기 중</h1>
-          <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타납니다.</p>
+          <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타나요</p>
         </div>
 
         <div id="g-active" style="display:none">
@@ -121,7 +145,6 @@ button.secondary:hover { background: var(--hover-bg); }
         </div>
       </div>
 
-      <!-- 내 정보 탭 -->
       <div id="panel-mypage" style="display:none">
         <div style="margin-bottom:1.25rem">
           <div style="font-size:13px;color:var(--text-sub);margin-bottom:8px;font-weight:500">화면 테마</div>
@@ -142,7 +165,9 @@ button.secondary:hover { background: var(--hover-bg); }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const ADMIN_URL = "https://orca1234.github.io/quiz-admin";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCiTZ2OXhz-iBxmj2jO7H4P1s3B-3FfifM",
@@ -164,15 +189,16 @@ let seenMessageKeys = new Set();
 // 테마
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  document.getElementById('theme-toggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+  const tb = document.getElementById('theme-toggle');
+  if (tb) tb.textContent = theme === 'dark' ? '☀️' : '🌙';
   localStorage.setItem('quiz-player-theme', theme);
   const lb = document.getElementById('theme-light-btn');
-  const db2 = document.getElementById('theme-dark-btn');
-  if (lb && db2) {
+  const dbtn = document.getElementById('theme-dark-btn');
+  if (lb && dbtn) {
     lb.style.background = theme === 'light' ? 'var(--text)' : 'var(--card)';
     lb.style.color = theme === 'light' ? 'var(--bg)' : 'var(--text)';
-    db2.style.background = theme === 'dark' ? 'var(--text)' : 'var(--card)';
-    db2.style.color = theme === 'dark' ? 'var(--bg)' : 'var(--text)';
+    dbtn.style.background = theme === 'dark' ? 'var(--text)' : 'var(--card)';
+    dbtn.style.color = theme === 'dark' ? 'var(--bg)' : 'var(--text)';
   }
 }
 window.toggleTheme = () => {
@@ -189,19 +215,68 @@ window.switchTab = (tab) => {
   document.getElementById('tab-mypage').classList.toggle('active', tab === 'mypage');
 };
 
-window.join = async () => {
-  nick = document.getElementById('nick-input').value.trim();
-  const msg = document.getElementById('login-msg');
-  if (!nick) { msg.innerHTML = '<div class="msg msg-err">닉네임을 입력해주세요</div>'; return; }
-  const existing = await get(ref(db, 'players/' + nick));
-  if (!existing.val()) {
-    await set(ref(db, 'players/' + nick), { solved: 0 });
+function showScreen(id) {
+  ['screen-login','screen-signup','screen-redirect','screen-game'].forEach(s => {
+    document.getElementById(s).style.display = s === id ? '' : 'none';
+  });
+}
+
+window.showSignup = () => { showScreen('screen-signup'); document.getElementById('signup-msg').innerHTML=''; };
+window.showLogin = () => { showScreen('screen-login'); document.getElementById('login-msg').innerHTML=''; };
+
+// 간단 해시 (평문 저장 방지용, 보안 등급용 아님)
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
   }
-  document.getElementById('screen-login').style.display = 'none';
-  document.getElementById('screen-game').style.display = '';
+  return hash.toString();
+}
+
+window.doSignup = async () => {
+  const n = document.getElementById('signup-nick').value.trim();
+  const p = document.getElementById('signup-pw').value;
+  const msg = document.getElementById('signup-msg');
+  if (!n || !p) { msg.innerHTML = '<div class="msg msg-err">닉네임과 비밀번호를 입력해주세요</div>'; return; }
+  if (n === 'admin') { msg.innerHTML = '<div class="msg msg-err">사용할 수 없는 닉네임이에요</div>'; return; }
+  const snap = await get(ref(db, 'accounts/' + n));
+  if (snap.val()) { msg.innerHTML = '<div class="msg msg-err">이미 사용 중인 닉네임이에요</div>'; return; }
+  await set(ref(db, 'accounts/' + n), { pw: simpleHash(p) });
+  await set(ref(db, 'players/' + n), { solved: 0 });
+  msg.innerHTML = '<div class="msg msg-ok">가입 완료! 로그인해주세요</div>';
+  setTimeout(() => { showLogin(); document.getElementById('login-nick').value = n; }, 1000);
+};
+
+window.doLogin = async () => {
+  const n = document.getElementById('login-nick').value.trim();
+  const p = document.getElementById('login-pw').value;
+  const msg = document.getElementById('login-msg');
+  if (!n || !p) { msg.innerHTML = '<div class="msg msg-err">닉네임과 비밀번호를 입력해주세요</div>'; return; }
+
+  if (n === 'admin' && p === 'admin') {
+    showScreen('screen-redirect');
+    setTimeout(() => { window.location.href = ADMIN_URL; }, 800);
+    return;
+  }
+
+  const snap = await get(ref(db, 'accounts/' + n));
+  const account = snap.val();
+  if (!account || account.pw !== simpleHash(p)) {
+    msg.innerHTML = '<div class="msg msg-err">닉네임 또는 비밀번호가 틀렸어요</div>';
+    return;
+  }
+  localStorage.setItem('quiz-player-nick', n);
+  localStorage.setItem('quiz-player-pw', p);
+  enterGame(n);
+};
+
+function enterGame(n) {
+  nick = n;
+  showScreen('screen-game');
   document.getElementById('g-name').textContent = nick + '님';
   startListeners();
-};
+}
 
 function startListeners() {
   unsubProblems = onValue(ref(db, 'problems'), snap => {
@@ -234,7 +309,7 @@ function startListeners() {
 function showToast(text) {
   const el = document.createElement('div');
   el.className = 'msg-toast';
-  el.textContent = '📢 ' + text;
+  el.textContent = '메시지: ' + text;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 4000);
 }
@@ -298,20 +373,39 @@ window.submit = async () => {
   }
 };
 
-window.leave = async () => {
+window.logout = async () => {
   if (unsubSession) unsubSession();
   if (unsubProblems) unsubProblems();
   if (unsubPlayer) unsubPlayer();
   if (unsubMessages) unsubMessages();
-  await remove(ref(db, 'players/' + nick));
-  await remove(ref(db, 'messages/' + nick));
+  // 세션 활성 표시(어드민 현황)에서만 제외하고 계정/기록은 유지하고 싶다면 players 노드는 남겨둠
+  // 여기서는 "현재 접속 중" 목적의 players 노드를 그대로 두되 로컬 로그인 정보만 삭제
+  localStorage.removeItem('quiz-player-nick');
+  localStorage.removeItem('quiz-player-pw');
   nick = ''; problems = []; solved = 0; history = {}; seenMessageKeys = new Set();
-  document.getElementById('screen-login').style.display = '';
-  document.getElementById('screen-game').style.display = 'none';
-  document.getElementById('nick-input').value = '';
-  document.getElementById('login-msg').innerHTML = '';
+  document.getElementById('login-nick').value = '';
+  document.getElementById('login-pw').value = '';
+  showLogin();
   switchTab('quiz');
 };
+
+// 자동 로그인
+(async () => {
+  const savedNick = localStorage.getItem('quiz-player-nick');
+  const savedPw = localStorage.getItem('quiz-player-pw');
+  if (savedNick && savedPw) {
+    const snap = await get(ref(db, 'accounts/' + savedNick));
+    const account = snap.val();
+    if (account && account.pw === simpleHash(savedPw)) {
+      enterGame(savedNick);
+      return;
+    } else {
+      localStorage.removeItem('quiz-player-nick');
+      localStorage.removeItem('quiz-player-pw');
+    }
+  }
+  showLogin();
+})();
 </script>
 </body>
 </html>
