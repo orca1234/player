@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathtime</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mathtime!</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -22,17 +22,18 @@
   --red-bg: #321a1a; --red-text: #e08080;
   --gray-bg: #333230; --hover-bg: #2c2b28; --divider: #3a3935;
 }
-body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
-.wrap { width: 100%; max-width: 480px; padding: 1.5rem 1rem; }
-.card { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+html, body { height: 100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.wrap { width: 100%; max-width: 480px; padding: 1.25rem 1rem; }
+.card { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; }
 .center { text-align: center; }
-h1 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
-.sub { font-size: 14px; color: var(--text-sub); margin-bottom: 1.5rem; }
+h1 { font-size: clamp(17px, 5vw, 20px); font-weight: 500; margin-bottom: 6px; }
+.sub { font-size: clamp(13px, 3.5vw, 14px); color: var(--text-sub); margin-bottom: 1.25rem; }
 label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; margin-top: 12px; text-align: left; }
 label:first-of-type { margin-top: 0; }
 input[type="text"], input[type="password"] { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--input-bg); color: var(--text); }
 input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
-button.primary { width: 100%; padding: 10px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 14px; }
+button.primary { width: 100%; padding: 11px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 14px; }
 button.primary:hover { opacity: 0.85; }
 button.secondary { padding: 6px 14px; background: var(--card); color: var(--text); border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; }
 button.secondary:hover { background: var(--hover-bg); }
@@ -40,20 +41,19 @@ button.secondary:hover { background: var(--hover-bg); }
 .download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: var(--text); color: var(--bg); border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; margin-bottom: 1rem; }
 .download:hover { opacity: 0.85; }
 .answer-row { display: flex; gap: 8px; }
-.answer-row input { flex: 1; }
-.answer-row button { padding: 10px 20px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.answer-row input { flex: 1; min-width: 0; }
+.answer-row button { padding: 10px 16px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
 .msg { padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-top: 12px; }
 .msg-ok { background: var(--green-bg); color: var(--green-text); }
 .msg-err { background: var(--red-bg); color: var(--red-text); }
-.top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 8px; }
+.top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 8px; flex-wrap: wrap; }
 .top-name { font-size: 15px; font-weight: 500; }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; background: var(--accent-bg); color: var(--accent-text); margin-left: 8px; }
-.big-icon { font-size: 40px; margin-bottom: 12px; }
 .prob-label { font-size: 13px; color: var(--text-sub); margin-bottom: 4px; }
-.prob-name { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
-.theme-btn { width: 32px; height: 32px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.prob-name { font-size: clamp(14px, 4vw, 16px); font-weight: 500; margin-bottom: 1rem; }
+.theme-btn { padding: 6px 12px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; font-family: inherit; flex-shrink: 0; }
 .theme-btn:hover { background: var(--hover-bg); }
-.header-actions { display: flex; gap: 6px; align-items: center; }
+.header-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
 .tab-btn { flex: 1; padding: 8px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text-sub); font-size: 13px; cursor: pointer; font-family: inherit; }
 .tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
@@ -61,49 +61,51 @@ button.secondary:hover { background: var(--hover-bg); }
 .history-item:last-child { border-bottom: none; }
 .history-num { color: var(--text-muted); min-width: 40px; }
 .history-ans { color: var(--text-sub); flex: 1; }
-.msg-toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent-text); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 200; max-width: 90%; text-align: center; animation: slideDown 0.3s ease; }
+.msg-toast { position: fixed; top: max(16px, env(safe-area-inset-top, 16px)); left: 50%; transform: translateX(-50%); background: var(--accent-text); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 200; max-width: 90vw; text-align: center; animation: slideDown 0.3s ease; }
 @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .redirect-box { text-align: center; padding: 2rem 0; }
+@media (max-width: 400px) {
+  .card { padding: 1rem; }
+  .wrap { padding: 1rem 0.75rem; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- 로그인 화면 -->
+  <!-- 로그인 -->
   <div id="screen-login" class="card center">
     <h1>Mathtime</h1>
     <p class="sub">로그인하고 시작하세요</p>
     <label>닉네임</label>
-    <input type="text" id="login-nick" placeholder="닉네임" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="text" id="login-nick" placeholder="닉네임" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
     <label>비밀번호</label>
-    <input type="password" id="login-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="primary" onclick="doLogin()">로그인</button>
     <button class="link-btn" onclick="showSignup()">계정이 없으신가요? 회원가입</button>
     <div id="login-msg"></div>
   </div>
 
-  <!-- 회원가입 화면 -->
+  <!-- 회원가입 -->
   <div id="screen-signup" class="card center" style="display:none">
-    
     <h1>회원가입</h1>
     <p class="sub">닉네임과 비밀번호를 정하세요</p>
     <label>닉네임</label>
-    <input type="text" id="signup-nick" placeholder="닉네임" onkeydown="if(event.key==='Enter')doSignup()">
+    <input type="text" id="signup-nick" placeholder="닉네임" autocomplete="username" onkeydown="if(event.key==='Enter')doSignup()">
     <label>비밀번호</label>
-    <input type="password" id="signup-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doSignup()">
+    <input type="password" id="signup-pw" placeholder="비밀번호" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()">
     <button class="primary" onclick="doSignup()">회원가입</button>
     <button class="link-btn" onclick="showLogin()">이미 계정이 있으신가요? 로그인</button>
     <div id="signup-msg"></div>
   </div>
 
-  <!-- 어드민 리다이렉트 화면 -->
+  <!-- 어드민 리다이렉트 -->
   <div id="screen-redirect" class="card redirect-box" style="display:none">
-    
     <h1 style="font-size:18px">어드민 계정이에요</h1>
     <p class="sub">어드민 페이지로 이동할게요</p>
   </div>
 
-  <!-- 게임 화면 -->
+  <!-- 게임 -->
   <div id="screen-game" style="display:none">
     <div class="card">
       <div class="top-row">
@@ -124,11 +126,9 @@ button.secondary:hover { background: var(--hover-bg); }
 
       <div id="panel-quiz">
         <div id="g-waiting" class="center" style="padding:2rem 0">
-          
           <h1 style="font-size:18px">세션 대기 중</h1>
           <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타나요</p>
         </div>
-
         <div id="g-active" style="display:none">
           <div class="prob-label" id="g-prob-label"></div>
           <div class="prob-name" id="g-prob-name"></div>
@@ -142,9 +142,7 @@ button.secondary:hover { background: var(--hover-bg); }
           </div>
           <div id="ans-msg"></div>
         </div>
-
         <div id="g-done" class="center" style="display:none;padding:2rem 0">
-          
           <h1 style="font-size:18px">끝!</h1>
         </div>
       </div>
@@ -169,7 +167,7 @@ button.secondary:hover { background: var(--hover-bg); }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
 const ADMIN_URL = "https://orca1234.github.io/admin";
 
@@ -188,7 +186,17 @@ const db = getDatabase(app);
 
 let nick = '', problems = [], solved = 0, sessionActive = false, history = {};
 let unsubSession, unsubProblems, unsubPlayer, unsubMessages;
-let seenMessageKeys = new Set();
+
+// 알림: 로그인 후 이미 읽은 키를 localStorage에 저장해서 재접속해도 안 뜨게 함
+function getSeenKeys() {
+  try { return new Set(JSON.parse(localStorage.getItem('quiz-seen-msgs-' + nick) || '[]')); }
+  catch { return new Set(); }
+}
+function saveSeenKey(key) {
+  const keys = getSeenKeys();
+  keys.add(key);
+  localStorage.setItem('quiz-seen-msgs-' + nick, JSON.stringify([...keys]));
+}
 
 // 테마
 function applyTheme(theme) {
@@ -209,7 +217,7 @@ window.toggleTheme = () => {
   const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   applyTheme(current === 'dark' ? 'light' : 'dark');
 };
-window.setTheme = (theme) => applyTheme(theme);
+window.setTheme = (t) => applyTheme(t);
 applyTheme(localStorage.getItem('quiz-player-theme') || 'light');
 
 window.switchTab = (tab) => {
@@ -228,13 +236,9 @@ function showScreen(id) {
 window.showSignup = () => { showScreen('screen-signup'); document.getElementById('signup-msg').innerHTML=''; };
 window.showLogin = () => { showScreen('screen-login'); document.getElementById('login-msg').innerHTML=''; };
 
-// 간단 해시 (평문 저장 방지용, 보안 등급용 아님)
 function simpleHash(str) {
   let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
+  for (let i = 0; i < str.length; i++) { hash = (hash << 5) - hash + str.charCodeAt(i); hash |= 0; }
   return hash.toString();
 }
 
@@ -248,7 +252,7 @@ window.doSignup = async () => {
   if (snap.val()) { msg.innerHTML = '<div class="msg msg-err">이미 사용 중인 닉네임이에요</div>'; return; }
   await set(ref(db, 'accounts/' + n), { pw: simpleHash(p) });
   await set(ref(db, 'players/' + n), { solved: 0 });
-  msg.innerHTML = '<div class="msg msg-ok">가입 완료! 로그인해주세요</div>';
+  msg.innerHTML = '<div class="msg msg-ok">가입 완료</div>';
   setTimeout(() => { showLogin(); document.getElementById('login-nick').value = n; }, 1000);
 };
 
@@ -257,18 +261,15 @@ window.doLogin = async () => {
   const p = document.getElementById('login-pw').value;
   const msg = document.getElementById('login-msg');
   if (!n || !p) { msg.innerHTML = '<div class="msg msg-err">닉네임과 비밀번호를 입력해주세요</div>'; return; }
-
   if (n === 'admin' && p === 'admin') {
     showScreen('screen-redirect');
     setTimeout(() => { window.location.href = ADMIN_URL; }, 800);
     return;
   }
-
   const snap = await get(ref(db, 'accounts/' + n));
   const account = snap.val();
   if (!account || account.pw !== simpleHash(p)) {
-    msg.innerHTML = '<div class="msg msg-err">닉네임 또는 비밀번호가 틀렸어요</div>';
-    return;
+    msg.innerHTML = '<div class="msg msg-err">닉네임 또는 비밀번호가 틀렸어요</div>'; return;
   }
   localStorage.setItem('quiz-player-nick', n);
   localStorage.setItem('quiz-player-pw', p);
@@ -301,9 +302,10 @@ function startListeners() {
   unsubMessages = onValue(ref(db, 'messages/' + nick), snap => {
     const data = snap.val();
     if (!data) return;
+    const seen = getSeenKeys();
     Object.entries(data).forEach(([key, m]) => {
-      if (!seenMessageKeys.has(key)) {
-        seenMessageKeys.add(key);
+      if (!seen.has(key)) {
+        saveSeenKey(key);
         showToast(m.text);
       }
     });
@@ -313,9 +315,12 @@ function startListeners() {
 function showToast(text) {
   const el = document.createElement('div');
   el.className = 'msg-toast';
-  el.textContent = '메시지: ' + text;
+  el.innerHTML = `<span>메시지: ${text}</span><button onclick="this.parentElement.remove()" style="margin-left:12px;background:none;border:none;color:#fff;font-size:16px;cursor:pointer;line-height:1;flex-shrink:0">×</button>`;
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+  el.style.gap = '4px';
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+  setTimeout(() => { if (el.parentElement) el.remove(); }, 6000);
 }
 
 function renderHistory() {
@@ -331,17 +336,27 @@ function renderHistory() {
 }
 
 function render() {
-  document.getElementById('g-badge').textContent = solved + '/' + problems.length + ' 완료';
+  const badge = document.getElementById('g-badge');
+  // 세션 종료 시 완료 배지 숨기기
+  if (!sessionActive) {
+    badge.textContent = '';
+  } else {
+    badge.textContent = solved + '/' + problems.length + ' 완료';
+  }
+
   const waiting = document.getElementById('g-waiting');
   const active = document.getElementById('g-active');
   const done = document.getElementById('g-done');
 
-  if (!sessionActive) {
+  // 세션 종료 or 문제 없음 → 대기 화면
+  if (!sessionActive || !problems.length) {
     waiting.style.display=''; active.style.display='none'; done.style.display='none'; return;
   }
-  if (problems.length > 0 && solved >= problems.length) {
+  // 모두 풀었을 때
+  if (solved >= problems.length) {
     waiting.style.display='none'; active.style.display='none'; done.style.display=''; return;
   }
+
   const prob = problems[solved];
   if (!prob) { waiting.style.display=''; active.style.display='none'; done.style.display='none'; return; }
 
@@ -377,16 +392,14 @@ window.submit = async () => {
   }
 };
 
-window.logout = async () => {
+window.logout = () => {
   if (unsubSession) unsubSession();
   if (unsubProblems) unsubProblems();
   if (unsubPlayer) unsubPlayer();
   if (unsubMessages) unsubMessages();
-  // 세션 활성 표시(어드민 현황)에서만 제외하고 계정/기록은 유지하고 싶다면 players 노드는 남겨둠
-  // 여기서는 "현재 접속 중" 목적의 players 노드를 그대로 두되 로컬 로그인 정보만 삭제
   localStorage.removeItem('quiz-player-nick');
   localStorage.removeItem('quiz-player-pw');
-  nick = ''; problems = []; solved = 0; history = {}; seenMessageKeys = new Set();
+  nick = ''; problems = []; solved = 0; history = {};
   document.getElementById('login-nick').value = '';
   document.getElementById('login-pw').value = '';
   showLogin();
