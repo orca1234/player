@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Mathtime!</title>
+<title>Mathtime</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -12,7 +12,7 @@
   --accent: #378add; --accent-bg: #e6f1fb; --accent-text: #185fa5;
   --green-bg: #eaf3de; --green-text: #3b6d11;
   --red-bg: #fcebeb; --red-text: #a32d2d;
-  --gray-bg: #e8e8e3; --hover-bg: #f5f5f0; --divider: #e8e8e3;
+  --gray-bg: #e8e8e3; --hover-bg: #f1efe8; --divider: #e8e8e3;
 }
 [data-theme="dark"] {
   --bg: #1a1a18; --card: #242422; --text: #f0efe9; --text-sub: #b8b6ad; --text-muted: #8a887f;
@@ -24,11 +24,11 @@
 }
 html, body { height: 100%; }
 body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-.wrap { width: 100%; max-width: 480px; padding: 1.25rem 1rem; }
-.card { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+.wrap { width: 100%; max-width: 640px; padding: 1.25rem 1.25rem; }
+.card { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; }
 .center { text-align: center; }
 h1 { font-size: clamp(17px, 5vw, 20px); font-weight: 500; margin-bottom: 6px; }
-.sub { font-size: clamp(13px, 3.5vw, 14px); color: var(--text-sub); margin-bottom: 1.25rem; }
+.sub { font-size: clamp(13px, 3.5vw, 14px); color: var(--text-sub); margin-bottom: 1.5rem; }
 label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; margin-top: 12px; text-align: left; }
 label:first-of-type { margin-top: 0; }
 input[type="text"], input[type="password"] { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--input-bg); color: var(--text); }
@@ -57,23 +57,30 @@ button.secondary:hover { background: var(--hover-bg); }
 .tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
 .tab-btn { flex: 1; padding: 8px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--card); color: var(--text-sub); font-size: 13px; cursor: pointer; font-family: inherit; }
 .tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-.history-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--divider); font-size: 13px; }
+
+/* 기록 */
+.history-group { border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+.history-group-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; background: var(--card); }
+.history-group-header:hover { background: var(--hover-bg); }
+.history-group-title { font-size: 14px; font-weight: 500; }
+.history-group-meta { font-size: 12px; color: var(--text-muted); }
+.history-group-body { display: none; border-top: 0.5px solid var(--divider); }
+.history-group-body.open { display: block; }
+.history-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 0.5px solid var(--divider); font-size: 13px; }
 .history-item:last-child { border-bottom: none; }
 .history-num { color: var(--text-muted); min-width: 40px; }
 .history-ans { color: var(--text-sub); flex: 1; }
-.msg-toast { position: fixed; top: max(16px, env(safe-area-inset-top, 16px)); left: 50%; transform: translateX(-50%); background: var(--accent-text); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 200; max-width: 90vw; text-align: center; animation: slideDown 0.3s ease; }
+.chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+.chevron.open { transform: rotate(180deg); }
+
+.msg-toast { position: fixed; top: max(16px, env(safe-area-inset-top, 16px)); left: 50%; transform: translateX(-50%); background: var(--accent-text); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 200; max-width: 90vw; text-align: center; animation: slideDown 0.3s ease; display: flex; align-items: center; gap: 8px; }
 @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-.redirect-box { text-align: center; padding: 2rem 0; }
-@media (max-width: 400px) {
-  .card { padding: 1rem; }
-  .wrap { padding: 1rem 0.75rem; }
-}
+@media (max-width: 400px) { .card { padding: 1rem; } .wrap { padding: 1rem 0.75rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- 로그인 -->
   <div id="screen-login" class="card center">
     <h1>Mathtime</h1>
     <p class="sub">로그인하고 시작하세요</p>
@@ -86,7 +93,6 @@ button.secondary:hover { background: var(--hover-bg); }
     <div id="login-msg"></div>
   </div>
 
-  <!-- 회원가입 -->
   <div id="screen-signup" class="card center" style="display:none">
     <h1>회원가입</h1>
     <p class="sub">닉네임과 비밀번호를 정하세요</p>
@@ -99,13 +105,11 @@ button.secondary:hover { background: var(--hover-bg); }
     <div id="signup-msg"></div>
   </div>
 
-  <!-- 어드민 리다이렉트 -->
-  <div id="screen-redirect" class="card redirect-box" style="display:none">
+  <div id="screen-redirect" class="card center" style="display:none">
     <h1 style="font-size:18px">어드민 계정이에요</h1>
     <p class="sub">어드민 페이지로 이동할게요</p>
   </div>
 
-  <!-- 게임 -->
   <div id="screen-game" style="display:none">
     <div class="card">
       <div class="top-row">
@@ -126,8 +130,8 @@ button.secondary:hover { background: var(--hover-bg); }
 
       <div id="panel-quiz">
         <div id="g-waiting" class="center" style="padding:2rem 0">
-          <h1 style="font-size:18px">세션 대기 중</h1>
-          <p class="sub" style="margin-bottom:0">어드민이 세션을 시작하면 문제가 나타나요</p>
+          <h1 style="font-size:18px">대기중...</h1>
+          <p class="sub" style="margin-bottom:0"> 어드민이 문제를 낼 거에요</p>
         </div>
         <div id="g-active" style="display:none">
           <div class="prob-label" id="g-prob-label"></div>
@@ -143,7 +147,7 @@ button.secondary:hover { background: var(--hover-bg); }
           <div id="ans-msg"></div>
         </div>
         <div id="g-done" class="center" style="display:none;padding:2rem 0">
-          <h1 style="font-size:18px">끝!</h1>
+          <h1 style="font-size:18px">모든 문제 완료</h1>
         </div>
       </div>
 
@@ -156,8 +160,8 @@ button.secondary:hover { background: var(--hover-bg); }
           </div>
         </div>
         <div>
-          <div style="font-size:13px;color:var(--text-sub);margin-bottom:8px;font-weight:500">최근 푼 문제</div>
-          <div id="history-list"><p class="sub" style="margin:0">아직 푼 문제가 없어요</p></div>
+          <div style="font-size:13px;color:var(--text-sub);margin-bottom:8px;font-weight:500">최근 기록</div>
+          <div id="history-list"><p class="sub" style="margin:0">아직 기록이 없어요</p></div>
         </div>
       </div>
     </div>
@@ -167,10 +171,9 @@ button.secondary:hover { background: var(--hover-bg); }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-const ADMIN_URL = "https://orca1234.github.io/admin";
-
+const ADMIN_URL = "https://mathtimeadmin.kro.kr";
 const firebaseConfig = {
   apiKey: "AIzaSyCiTZ2OXhz-iBxmj2jO7H4P1s3B-3FfifM",
   authDomain: "mathtime-32f04.firebaseapp.com",
@@ -180,23 +183,11 @@ const firebaseConfig = {
   messagingSenderId: "109741787829",
   appId: "1:109741787829:web:7fb09ac5c7dbe0262accfc"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let nick = '', problems = [], solved = 0, sessionActive = false, history = {};
-let unsubSession, unsubProblems, unsubPlayer, unsubMessages;
-
-// 알림: 로그인 후 이미 읽은 키를 localStorage에 저장해서 재접속해도 안 뜨게 함
-function getSeenKeys() {
-  try { return new Set(JSON.parse(localStorage.getItem('quiz-seen-msgs-' + nick) || '[]')); }
-  catch { return new Set(); }
-}
-function saveSeenKey(key) {
-  const keys = getSeenKeys();
-  keys.add(key);
-  localStorage.setItem('quiz-seen-msgs-' + nick, JSON.stringify([...keys]));
-}
+let nick = '', allProblems = {}, folders = {}, folderProblems = [], solved = 0, sessionActive = false, selectedFolderId = null, historyData = {};
+let unsubSession, unsubProblems, unsubFolders, unsubPlayer, unsubMessages;
 
 // 테마
 function applyTheme(theme) {
@@ -213,10 +204,7 @@ function applyTheme(theme) {
     dbtn.style.color = theme === 'dark' ? 'var(--bg)' : 'var(--text)';
   }
 }
-window.toggleTheme = () => {
-  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-  applyTheme(current === 'dark' ? 'light' : 'dark');
-};
+window.toggleTheme = () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 window.setTheme = (t) => applyTheme(t);
 applyTheme(localStorage.getItem('quiz-player-theme') || 'light');
 
@@ -232,7 +220,6 @@ function showScreen(id) {
     document.getElementById(s).style.display = s === id ? '' : 'none';
   });
 }
-
 window.showSignup = () => { showScreen('screen-signup'); document.getElementById('signup-msg').innerHTML=''; };
 window.showLogin = () => { showScreen('screen-login'); document.getElementById('login-msg').innerHTML=''; };
 
@@ -251,8 +238,7 @@ window.doSignup = async () => {
   const snap = await get(ref(db, 'accounts/' + n));
   if (snap.val()) { msg.innerHTML = '<div class="msg msg-err">이미 사용 중인 닉네임이에요</div>'; return; }
   await set(ref(db, 'accounts/' + n), { pw: simpleHash(p) });
-  await set(ref(db, 'players/' + n), { solved: 0 });
-  msg.innerHTML = '<div class="msg msg-ok">가입 완료</div>';
+  msg.innerHTML = '<div class="msg msg-ok">가입 완료! 로그인해주세요</div>';
   setTimeout(() => { showLogin(); document.getElementById('login-nick').value = n; }, 1000);
 };
 
@@ -276,130 +262,172 @@ window.doLogin = async () => {
   enterGame(n);
 };
 
-function enterGame(n) {
+async function enterGame(n) {
   nick = n;
+  const snap = await get(ref(db, 'players/' + nick));
+  if (!snap.val()) await set(ref(db, 'players/' + nick), { solved: 0 });
   showScreen('screen-game');
   document.getElementById('g-name').textContent = nick + '님';
   startListeners();
 }
 
 function startListeners() {
-  unsubProblems = onValue(ref(db, 'problems'), snap => {
-    problems = snap.val() ? Object.values(snap.val()).sort((a,b) => a.num - b.num) : [];
-    render();
-  });
-  unsubSession = onValue(ref(db, 'session/active'), snap => {
-    sessionActive = snap.val() || false;
-    render();
+  unsubFolders = onValue(ref(db, 'folders'), snap => { folders = snap.val() || {}; rebuildFolderProblems(); });
+  unsubProblems = onValue(ref(db, 'problems'), snap => { allProblems = snap.val() || {}; rebuildFolderProblems(); });
+  unsubSession = onValue(ref(db, 'session'), snap => {
+    const s = snap.val() || {};
+    sessionActive = s.active || false;
+    selectedFolderId = s.selectedFolder || null;
+    rebuildFolderProblems();
   });
   unsubPlayer = onValue(ref(db, 'players/' + nick), snap => {
     const val = snap.val() || {};
     solved = val.solved || 0;
-    history = val.history || {};
+    historyData = val.history || {};
     render();
     renderHistory();
   });
-  unsubMessages = onValue(ref(db, 'messages/' + nick), snap => {
+  unsubMessages = onValue(ref(db, 'messages/' + nick), async snap => {
     const data = snap.val();
     if (!data) return;
-    const seen = getSeenKeys();
+    const seen = await getSeenKeys();
     Object.entries(data).forEach(([key, m]) => {
-      if (!seen.has(key)) {
-        saveSeenKey(key);
-        showToast(m.text);
-      }
+      if (!seen.has(key)) { saveSeenKey(key); showToast(m.text); }
     });
   });
+}
+
+function rebuildFolderProblems() {
+  if (sessionActive && selectedFolderId) {
+    folderProblems = Object.values(allProblems)
+      .filter(p => p.folderIds && p.folderIds[selectedFolderId])
+      .sort((a,b) => a.num - b.num);
+  } else {
+    folderProblems = [];
+  }
+  render();
+}
+
+async function getSeenKeys() {
+  try {
+    const snap = await get(ref(db, 'seenMessages/' + nick));
+    return new Set(snap.val() ? Object.keys(snap.val()) : []);
+  } catch { return new Set(); }
+}
+async function saveSeenKey(key) {
+  await set(ref(db, 'seenMessages/' + nick + '/' + key), true);
 }
 
 function showToast(text) {
   const el = document.createElement('div');
   el.className = 'msg-toast';
-  el.innerHTML = `<span>메시지: ${text}</span><button onclick="this.parentElement.remove()" style="margin-left:12px;background:none;border:none;color:#fff;font-size:16px;cursor:pointer;line-height:1;flex-shrink:0">×</button>`;
-  el.style.display = 'flex';
-  el.style.alignItems = 'center';
-  el.style.gap = '4px';
+  el.innerHTML = `<span>메시지: ${text}</span><button onclick="this.parentElement.remove()" style="margin-left:8px;background:none;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;">×</button>`;
   document.body.appendChild(el);
   setTimeout(() => { if (el.parentElement) el.remove(); }, 6000);
 }
 
-function renderHistory() {
-  const el = document.getElementById('history-list');
-  const items = Object.values(history).sort((a,b) => a.num - b.num);
-  if (!items.length) { el.innerHTML = '<p class="sub" style="margin:0">아직 푼 문제가 없어요</p>'; return; }
-  el.innerHTML = items.map(h => `
-    <div class="history-item">
-      <span class="history-num">${h.num}번</span>
-      <span class="history-ans">제출한 답: ${h.answer}</span>
-    </div>
-  `).join('');
-}
-
 function render() {
   const badge = document.getElementById('g-badge');
-  // 세션 종료 시 완료 배지 숨기기
-  if (!sessionActive) {
-    badge.textContent = '';
-  } else {
-    badge.textContent = solved + '/' + problems.length + ' 완료';
-  }
+  badge.textContent = (sessionActive && folderProblems.length > 0) ? `${solved}/${folderProblems.length} 완료` : '';
 
   const waiting = document.getElementById('g-waiting');
   const active = document.getElementById('g-active');
   const done = document.getElementById('g-done');
 
-  // 세션 종료 or 문제 없음 → 대기 화면
-  if (!sessionActive || !problems.length) {
+  if (!sessionActive || !folderProblems.length) {
     waiting.style.display=''; active.style.display='none'; done.style.display='none'; return;
   }
-  // 모두 풀었을 때
-  if (solved >= problems.length) {
+  if (solved >= folderProblems.length) {
     waiting.style.display='none'; active.style.display='none'; done.style.display=''; return;
   }
 
-  const prob = problems[solved];
+  const prob = folderProblems[solved];
   if (!prob) { waiting.style.display=''; active.style.display='none'; done.style.display='none'; return; }
 
   waiting.style.display='none'; active.style.display=''; done.style.display='none';
-  document.getElementById('g-prob-label').textContent = '문제 ' + (solved+1) + ' / ' + problems.length;
+  const folderName = (selectedFolderId && folders[selectedFolderId]) ? folders[selectedFolderId].name : '';
+  document.getElementById('g-prob-label').textContent = (folderName ? folderName + ' · ' : '') + `문제 ${solved+1} / ${folderProblems.length}`;
   document.getElementById('g-prob-name').textContent = prob.name;
 
   const dlBtn = document.getElementById('g-download');
-  if (prob.fileLink) {
-    dlBtn.style.display = 'flex';
-    dlBtn.href = prob.fileLink;
-  } else {
-    dlBtn.style.display = 'none';
-  }
+  if (prob.fileLink) { dlBtn.style.display='flex'; dlBtn.href=prob.fileLink; }
+  else { dlBtn.style.display='none'; }
 
   document.getElementById('ans-input').value = '';
   document.getElementById('ans-msg').innerHTML = '';
 }
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  const sessions = Object.values(historyData);
+  if (!sessions.length) { el.innerHTML = '<p class="sub" style="margin:0">아직 기록이 없어요</p>'; return; }
+  // 날짜 내림차순
+  sessions.sort((a,b) => (b.date||0) - (a.date||0));
+  el.innerHTML = sessions.map((s, i) => {
+    const date = s.date ? new Date(s.date).toLocaleDateString('ko-KR', {month:'long',day:'numeric'}) : '';
+    const probs = s.problems ? Object.values(s.problems) : [];
+    return `<div class="history-group">
+      <div class="history-group-header" onclick="toggleHistory(${i})">
+        <div>
+          <span class="history-group-title">${s.folderName || '기록'}</span>
+          <span class="history-group-meta" style="margin-left:8px">${date}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:var(--text-muted)">${probs.length}문제</span>
+          <span class="chevron" id="chevron-${i}">▼</span>
+        </div>
+      </div>
+      <div class="history-group-body" id="history-body-${i}">
+        ${probs.sort((a,b)=>a.num-b.num).map(p=>`
+          <div class="history-item">
+            <span class="history-num">${p.num}번</span>
+            <span class="history-ans">${p.name}</span>
+            <span style="font-size:12px;color:var(--text-muted)">답: ${p.answer}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleHistory = (i) => {
+  const body = document.getElementById('history-body-' + i);
+  const chevron = document.getElementById('chevron-' + i);
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+};
 
 window.submit = async () => {
   const rawVal = document.getElementById('ans-input').value.trim();
   const val = rawVal.toLowerCase().replace(/\s/g,'');
   const msg = document.getElementById('ans-msg');
   if (!val) return;
-  const prob = problems[solved];
+  const prob = folderProblems[solved];
   if (!prob) return;
   if (val === prob.answer) {
-    await set(ref(db, `players/${nick}/history/${prob.id}`), { num: prob.num, answer: rawVal });
+    // 기록 저장: 세션 폴더 + 날짜별
+    const sessionKey = `${selectedFolderId}_${new Date().toDateString().replace(/ /g,'_')}`;
+    const folderName = (selectedFolderId && folders[selectedFolderId]) ? folders[selectedFolderId].name : '기록';
+    await set(ref(db, `players/${nick}/history/${sessionKey}/folderName`), folderName);
+    await set(ref(db, `players/${nick}/history/${sessionKey}/date`), Date.now());
+    await set(ref(db, `players/${nick}/history/${sessionKey}/problems/${prob.id}`), { num: prob.num, name: prob.name, answer: rawVal });
     await set(ref(db, 'players/' + nick + '/solved'), solved + 1);
-    msg.innerHTML = '<div class="msg msg-ok">정답!</div>';
+    msg.innerHTML = '<div class="msg msg-ok">정답이에요!</div>';
   } else {
-    msg.innerHTML = `<div class="msg msg-err">땡!${prob.hint ? ' 힌트: ' + prob.hint : ''}</div>`;
+    msg.innerHTML = `<div class="msg msg-err">틀렸어요!${prob.hint ? ' 힌트: ' + prob.hint : ''}</div>`;
   }
 };
 
-window.logout = () => {
+window.logout = async () => {
   if (unsubSession) unsubSession();
   if (unsubProblems) unsubProblems();
+  if (unsubFolders) unsubFolders();
   if (unsubPlayer) unsubPlayer();
   if (unsubMessages) unsubMessages();
+  await remove(ref(db, 'players/' + nick));
   localStorage.removeItem('quiz-player-nick');
   localStorage.removeItem('quiz-player-pw');
-  nick = ''; problems = []; solved = 0; history = {};
+  nick = ''; allProblems = {}; folderProblems = []; solved = 0; historyData = {};
   document.getElementById('login-nick').value = '';
   document.getElementById('login-pw').value = '';
   showLogin();
@@ -413,13 +441,8 @@ window.logout = () => {
   if (savedNick && savedPw) {
     const snap = await get(ref(db, 'accounts/' + savedNick));
     const account = snap.val();
-    if (account && account.pw === simpleHash(savedPw)) {
-      enterGame(savedNick);
-      return;
-    } else {
-      localStorage.removeItem('quiz-player-nick');
-      localStorage.removeItem('quiz-player-pw');
-    }
+    if (account && account.pw === simpleHash(savedPw)) { enterGame(savedNick); return; }
+    else { localStorage.removeItem('quiz-player-nick'); localStorage.removeItem('quiz-player-pw'); }
   }
   showLogin();
 })();
